@@ -1,16 +1,17 @@
 from fastapi import FastAPI
 import app.firestore_config
-from app.routers import user_devices_actions, devices
-from app.routers.tasks import tasks
+from app.routers import broker_service, device_service
+from app.routers.tasks import automated_task_service
+from app.routers.tasks.automated_task_service import scheduler
 
 app = FastAPI()
-app.include_router(user_devices_actions.router)
-app.include_router(devices.router)
-app.include_router(tasks.router)
+app.include_router(broker_service.router)
+app.include_router(device_service.router)
+app.include_router(automated_task_service.router)
 
-# @app.on_event("shutdown")
-# def shutdown_scheduler():
-#     scheduler.shutdown()
+@app.on_event("shutdown")
+def shutdown_scheduler():
+    scheduler.shutdown()
 
 if __name__ == "__main__":
     import uvicorn
